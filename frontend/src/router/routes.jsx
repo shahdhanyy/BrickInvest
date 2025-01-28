@@ -6,8 +6,9 @@ import Portfolio from "../pages/Portfolio/Portfolio";
 import Account from "../pages/Account/Account";
 import BuyNow from "../pages/BuyNow/BuyNow";
 import LandingPage from "../pages/LandingPage/";
-import Login from "../pages/Login.jsx/Login";
+import Login from "../pages/Login/Login";
 import SignUp from "../pages/SignUp/SignUp";
+
 
 const routes = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
