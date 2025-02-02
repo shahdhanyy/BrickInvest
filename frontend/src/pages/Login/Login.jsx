@@ -3,6 +3,7 @@ import * as Constants from "../../utils/Constants";
 import { useNavigate } from "react-router-dom";
 import { memo, useState, useRef } from "react";
 import axios from "axios";
+import jwtDecode from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,12 +20,11 @@ const Login = () => {
     password: null,
   });
 
-  // Handle form submission
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoginStatus({ ...loginStatus, loading: true, error: null });
 
-    // Validate form inputs
     if (!formRef.current.email?.value.trim() || !formRef.current.password?.value.trim()) {
       setLoginStatus({ ...loginStatus, error: "Email and password are required.", loading: false });
       return;
@@ -42,8 +42,18 @@ const Login = () => {
 
       if (response.status === 200) {
         console.log("Login successful:", response.data);
+
+        // Store token in localStorage
+        localStorage.setItem("token", response.data.token);
+
+        // Decode token to get user info
+        const userInfo = jwtDecode(response.data.token);
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+        console.log("User Info:", userInfo);
+
         setLoginStatus({ ...loginStatus, loading: false });
-        navigate("/dashboard"); // Navigate to dashboard on success
+        navigate("/dashboard"); // Redirect to dashboard
       }
     } catch (err) {
       console.error("Error during login:", err);
@@ -95,11 +105,10 @@ const Login = () => {
               {motionHoverAndTap(
                 <button
                   type="submit"
-                  className={`px-32 sm:px-56 py-2 w-auto font-bold text-dark-primaryTextColor ${
-                    loginStatus.loading
+                  className={`px-32 sm:px-56 py-2 w-auto font-bold text-dark-primaryTextColor ${loginStatus.loading
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-dark-cardBgColor hover:bg-light-backgroundColor hover:text-dark-backgroundColor"
-                  } border border-y-dark-secondaryTextColor rounded-lg transition duration-300 ease-in-out`}
+                    } border border-y-dark-secondaryTextColor rounded-lg transition duration-300 ease-in-out`}
                   disabled={loginStatus.loading}
                 >
                   Log In
